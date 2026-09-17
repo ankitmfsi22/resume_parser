@@ -1,0 +1,43 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: rp-mongo
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT}:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - rp-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: rp-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT}:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - rp-network
+
+volumes:
+  mongo_data:
+  redis_data:
+
+networks:
+  rp-network:
+    name: rp-network
+    driver: bridge
