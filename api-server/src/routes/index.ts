@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
-import uploadRoutes from './upload.routes.js';
-import { pingRedis } from '../config/redis.js';
+import { pingRedis } from '../config/redis';
+import uploadRoutes from './upload.routes';
 
 const router = Router();
 
-router.get('/health', async (req, res) => {
+router.get('/health', async (_req, res) => {
   const mongoOk = mongoose.connection.readyState === 1;
 
   let redisOk = false;
