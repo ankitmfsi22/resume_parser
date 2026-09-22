@@ -19,6 +19,7 @@
   "dependencies": {
     "bullmq": "^6.3.8",
     "dotenv": "^18.0.1",
+    "ioredis": "^6.0.0",
     "mammoth": "^1.12.3",
     "mongoose": "^9.10.1",
     "pdf-parse": "^1.1.1",

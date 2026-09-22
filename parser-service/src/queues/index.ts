@@ -7,6 +7,7 @@ export const QUEUE_NAMES = {
   OCR: 'ocr-queue',
   INSIGHTS: 'insights-queue',
 } as const;
+
 export const RETRY_JOB_OPTIONS: DefaultJobOptions = {
   attempts: 3,
   backoff: {
@@ -14,13 +15,29 @@ export const RETRY_JOB_OPTIONS: DefaultJobOptions = {
     delay: 2000,
   },
 };
+
 export interface ParseJobData {
   resumeId: string;
   filePath: string;
   fileType: FileType;
 }
 
-export const parseQueue = new Queue<ParseJobData>(QUEUE_NAMES.PARSE, {
+export interface OcrJobData {
+  resumeId: string;
+  filePath: string;
+  fileType: FileType;
+}
+
+export interface InsightsJobData {
+  resumeId: string;
+}
+
+export const ocrQueue = new Queue<OcrJobData>(QUEUE_NAMES.OCR, {
+  connection: redisConnectionOptions,
+  defaultJobOptions: RETRY_JOB_OPTIONS,
+});
+
+export const insightsQueue = new Queue<InsightsJobData>(QUEUE_NAMES.INSIGHTS, {
   connection: redisConnectionOptions,
   defaultJobOptions: RETRY_JOB_OPTIONS,
 });
