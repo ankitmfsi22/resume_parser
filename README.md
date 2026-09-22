@@ -103,7 +103,7 @@ cd parser-service && npm run dev
 Stop everything:
 ```bash
 # Ctrl + C in Tab 2 and Tab 3, then:
-docker compose down            # ⚠️ never use -v unless you want to delete all data
+docker compose down            # never use -v unless you want to delete all data
 ```
 
 ---
