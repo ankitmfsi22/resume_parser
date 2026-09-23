@@ -1,4 +1,4 @@
-import type { FileType } from '../models/Resume';
+import type { FileType } from '@resume-parser/shared';
 import { extractDocxText } from './docx.extractor';
 import { extractPdfText } from './pdf.extractor';
 

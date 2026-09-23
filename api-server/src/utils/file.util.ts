@@ -1,14 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { env } from '../config/env';
-import type { FileType } from '../models/Resume';
-
-const MIME_TO_TYPE: Record<string, FileType> = {
-  'application/pdf': 'pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
-  'image/jpeg': 'image',
-  'image/png': 'image',
-};
+export { getFileType } from '@resume-parser/shared';
 
 export function ensureUploadDir(): string {
   const dir = path.resolve(env.UPLOAD_DIR);
@@ -18,11 +11,6 @@ export function ensureUploadDir(): string {
   }
   return dir;
 }
-
-export function getFileType(mimetype: string): FileType | null {
-  return MIME_TO_TYPE[mimetype] ?? null;
-}
-
 export async function deleteFiles(filePaths: string[]): Promise<void> {
   await Promise.all(
     filePaths.map(async (p) => {
@@ -30,7 +18,7 @@ export async function deleteFiles(filePaths: string[]): Promise<void> {
         await fs.promises.unlink(p);
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
-        console.log(`Could not delete ${p}: ${message}`);
+        console.warn(`Could not delete ${p}: ${message}`);
       }
     }),
   );

@@ -1,19 +1,26 @@
 import { env } from './config/env';
 
-import { connectMongo, disconnectMongo } from './config/db';
-import { insightsQueue, ocrQueue } from './queues';
+import {
+  assertTopology,
+  closeRabbit,
+  connectMongo,
+  connectRabbit,
+  disconnectMongo,
+} from '@resume-parser/shared';
 import { startParseWorker } from './workers/parse.worker';
 
 async function start(): Promise<void> {
-  await connectMongo();
+  await connectMongo(env.MONGO_URI);
 
-  const worker = startParseWorker();
-  console.log(`Parser service started [${env.NODE_ENV}], waiting for jobs on parse-queue`);
+  const channel = await connectRabbit(env.RABBITMQ_URL);
+  await assertTopology(channel);
+
+  await startParseWorker();
+  console.log(`Parser service started [${env.NODE_ENV}]`);
 
   const shutdown = async (signal: string): Promise<void> => {
     console.log(`\n${signal} received, shutting down...`);
-    await worker.close();
-    await Promise.all([ocrQueue.close(), insightsQueue.close()]);
+    await closeRabbit();
     await disconnectMongo();
     process.exit(0);
   };

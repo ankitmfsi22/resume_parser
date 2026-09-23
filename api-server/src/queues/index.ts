@@ -1,26 +1,5 @@
-import { type DefaultJobOptions, Queue } from 'bullmq';
-import { redisConnectionOptions } from '../config/redis';
-import type { FileType } from '../models/Resume';
+import { getChannel, publishJob, ROUTING_KEYS, type ParseJobData } from '@resume-parser/shared';
 
-export const QUEUE_NAMES = {
-  PARSE: 'parse-queue',
-  OCR: 'ocr-queue',
-  INSIGHTS: 'insights-queue',
-} as const;
-export const RETRY_JOB_OPTIONS: DefaultJobOptions = {
-  attempts: 3,
-  backoff: {
-    type: 'exponential',
-    delay: 2000,
-  },
-};
-export interface ParseJobData {
-  resumeId: string;
-  filePath: string;
-  fileType: FileType;
+export function enqueueParseJob(data: ParseJobData): boolean {
+  return publishJob(getChannel(), ROUTING_KEYS.PARSE, data);
 }
-
-export const parseQueue = new Queue<ParseJobData>(QUEUE_NAMES.PARSE, {
-  connection: redisConnectionOptions,
-  defaultJobOptions: RETRY_JOB_OPTIONS,
-});

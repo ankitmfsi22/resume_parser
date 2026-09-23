@@ -1,87 +1,48 @@
-import { type Job, Worker } from 'bullmq';
-import { redisConnectionOptions } from '../config/redis';
+import {
+  getChannel,
+  QUEUES,
+  Resume,
+  startConsumer,
+  type JobContext,
+  type ParseJobData,
+} from '@resume-parser/shared';
 import { extractText } from '../extractors';
-import { Resume } from '../models/Resume';
-import { type ParseJobData, QUEUE_NAMES } from '../queues';
 
-interface ParseJobResult {
-  resumeId: string;
-  textLength: number;
-}
-
-function getMaxAttempts(job: Job<ParseJobData>): number {
-  return job.opts.attempts ?? 1;
-}
-
-async function processParseJob(job: Job<ParseJobData>): Promise<ParseJobResult> {
-  const { resumeId, filePath, fileType } = job.data;
-  const currentAttempt = job.attemptsMade + 1;
+async function processParseJob(data: ParseJobData, ctx: JobContext): Promise<void> {
+  const { resumeId, filePath, fileType } = data;
 
   console.log(
-    `[job ${job.id}] Attempt ${currentAttempt}/${getMaxAttempts(job)}: ` +
-      `extracting ${fileType} text for resume ${resumeId}`,
+    `[resume ${resumeId}] Attempt ${ctx.attempt}/${ctx.maxAttempts}: extracting ${fileType} text`,
   );
-
   const rawText = await extractText(filePath, fileType);
-
   const updated = await Resume.findByIdAndUpdate(resumeId, {
     rawText,
     status: 'parsed',
     error: null,
-    attempts: currentAttempt,
+    attempts: ctx.attempt,
   });
-
   if (!updated) {
     throw new Error(`Resume not found: ${resumeId}`);
   }
-
-  return { resumeId, textLength: rawText.length };
+  console.log(`[resume ${resumeId}] Parsed (${rawText.length} chars)`);
 }
-
-async function markResumeFailed(job: Job<ParseJobData>, err: Error): Promise<void> {
-  await Resume.findByIdAndUpdate(job.data.resumeId, {
+async function markResumeFailed(
+  data: ParseJobData,
+  error: Error,
+  attempts: number,
+): Promise<void> {
+  await Resume.findByIdAndUpdate(data.resumeId, {
     status: 'failed',
-    error: err.message,
-    attempts: job.attemptsMade,
+    error: error.message,
+    attempts,
   });
 }
 
-export function startParseWorker(): Worker<ParseJobData, ParseJobResult> {
-  const worker = new Worker<ParseJobData, ParseJobResult>(QUEUE_NAMES.PARSE, processParseJob, {
-    connection: redisConnectionOptions,
+export async function startParseWorker(): Promise<void> {
+  await startConsumer<ParseJobData>({
+    channel: getChannel(),
+    queue: QUEUES.PARSE,
+    handler: processParseJob,
+    onFinalFailure: markResumeFailed,
   });
-
-  worker.on('completed', (job, result) => {
-    console.log(`[job ${job.id}] Resume ${result.resumeId} parsed (${result.textLength} chars)`);
-  });
-
-  worker.on('failed', (job, err) => {
-    if (!job) {
-      console.error(`Job failed without job data: ${err.message}`);
-      return;
-    }
-
-    const maxAttempts = getMaxAttempts(job);
-    const isFinalAttempt = job.attemptsMade >= maxAttempts;
-    const time = new Date().toISOString();
-
-    if (!isFinalAttempt) {
-      console.warn(
-        `[${time}] [job ${job.id}] Attempt ${job.attemptsMade}/${maxAttempts} failed: ` +
-          `${err.message}. Retrying with backoff...`,
-      );
-      return;
-    }
-
-    console.error(
-      `[${time}] [job ${job.id}] Failed after ${maxAttempts} attempts: ${err.message}`,
-    );
-
-    markResumeFailed(job, err).catch((dbErr: unknown) => {
-      const message = dbErr instanceof Error ? dbErr.message : String(dbErr);
-      console.error(`Could not mark resume ${job.data.resumeId} as failed: ${message}`);
-    });
-  });
-
-  return worker;
 }

@@ -16,26 +16,30 @@ services:
     networks:
       - rp-network
 
-  redis:
-    image: redis:7-alpine
-    container_name: rp-redis
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: rp-rabbitmq
     restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     ports:
-      - "${REDIS_PORT}:6379"
-    command: ["redis-server", "--appendonly", "yes"]
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_UI_PORT}:15672"
     volumes:
-      - redis_data:/data
+      - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
       retries: 5
+      start_period: 30s
     networks:
       - rp-network
 
 volumes:
   mongo_data:
-  redis_data:
+  rabbitmq_data:
 
 networks:
   rp-network:

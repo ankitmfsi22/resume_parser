@@ -1,0 +1,14 @@
+{
+  "name": "resume-parser",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": ["packages/*", "api-server", "parser-service", "ocr-service"],
+  "scripts": {
+    "build:shared": "npm run build -w @resume-parser/shared",
+    "dev:shared": "npm run dev -w @resume-parser/shared",
+    "dev:api": "npm run dev -w api-server",
+    "dev:parser": "npm run dev -w parser-service",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  }
+}
