@@ -2,7 +2,7 @@ import type { FileType } from '@resume-parser/shared';
 import { extractDocxText } from './docx.extractor';
 import { extractPdfText } from './pdf.extractor';
 
-function normalizeText(text: string): string {
+export function normalizeText(text: string): string {
   return text
     .replace(/\r\n/g, '\n')
     .replace(/[ \t]+/g, ' ')
@@ -19,7 +19,7 @@ export async function extractText(filePath: string, fileType: FileType): Promise
       return normalizeText(await extractDocxText(filePath));
 
     case 'image':
-      throw new Error('Image resumes require OCR, which is not implemented yet');
+      throw new Error('Images must be routed to the OCR service, not extracted directly');
 
     default: {
       const unhandled: never = fileType;

@@ -7,25 +7,52 @@ import {
   type ParseJobData,
 } from '@resume-parser/shared';
 import { extractText } from '../extractors';
+import { enqueueOcrJob } from '../queues';
+import { hasEnoughText, requiresOcrBeforeExtraction } from '../routing';
 
-async function processParseJob(data: ParseJobData, ctx: JobContext): Promise<void> {
+async function sendToOcr(data: ParseJobData, reason: string): Promise<void> {
   const { resumeId, filePath, fileType } = data;
 
-  console.log(
-    `[resume ${resumeId}] Attempt ${ctx.attempt}/${ctx.maxAttempts}: extracting ${fileType} text`,
-  );
-  const rawText = await extractText(filePath, fileType);
+  await Resume.findByIdAndUpdate(resumeId, { status: 'ocr' });
+  enqueueOcrJob({ resumeId, filePath, fileType });
+  console.log(`[resume ${resumeId}] Sent to ocr-queue (${reason})`);
+}
+
+async function saveParsedText(resumeId: string, rawText: string, attempt: number): Promise<void> {
   const updated = await Resume.findByIdAndUpdate(resumeId, {
     rawText,
     status: 'parsed',
     error: null,
-    attempts: ctx.attempt,
+    attempts: attempt,
   });
+
   if (!updated) {
     throw new Error(`Resume not found: ${resumeId}`);
   }
   console.log(`[resume ${resumeId}] Parsed (${rawText.length} chars)`);
 }
+async function processParseJob(data: ParseJobData, ctx: JobContext): Promise<void> {
+  const { resumeId, filePath, fileType, text } = data;
+  console.log(
+    `[resume ${resumeId}] Attempt ${ctx.attempt}/${ctx.maxAttempts}: processing ${fileType}`,
+  );
+  if (text) {
+    console.log(`[resume ${resumeId}] Using OCR text (${text.length} chars)`);
+    await saveParsedText(resumeId, text, ctx.attempt);
+    return;
+  }
+  if (requiresOcrBeforeExtraction(fileType)) {
+    await sendToOcr(data, 'image file');
+    return;
+  }
+  const rawText = await extractText(filePath, fileType);
+  if (!hasEnoughText(rawText)) {
+    await sendToOcr(data, `only ${rawText.trim().length} chars extracted, likely scanned`);
+    return;
+  }
+  await saveParsedText(resumeId, rawText, ctx.attempt);
+}
+
 async function markResumeFailed(
   data: ParseJobData,
   error: Error,
