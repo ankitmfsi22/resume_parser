@@ -9,6 +9,7 @@ import {
 import { extractText } from '../extractors';
 import { enqueueOcrJob } from '../queues';
 import { hasEnoughText, requiresOcrBeforeExtraction } from '../routing';
+import { extractFields } from '../nlp';
 
 async function sendToOcr(data: ParseJobData, reason: string): Promise<void> {
   const { resumeId, filePath, fileType } = data;
@@ -19,8 +20,11 @@ async function sendToOcr(data: ParseJobData, reason: string): Promise<void> {
 }
 
 async function saveParsedText(resumeId: string, rawText: string, attempt: number): Promise<void> {
+  const parsed = extractFields(rawText);
+
   const updated = await Resume.findByIdAndUpdate(resumeId, {
     rawText,
+    parsed,
     status: 'parsed',
     error: null,
     attempts: attempt,
@@ -29,7 +33,13 @@ async function saveParsedText(resumeId: string, rawText: string, attempt: number
   if (!updated) {
     throw new Error(`Resume not found: ${resumeId}`);
   }
-  console.log(`[resume ${resumeId}] Parsed (${rawText.length} chars)`);
+
+  console.log(
+    `[resume ${resumeId}] Parsed — ` +
+    `name: ${parsed.name ?? 'not found'}, ` +
+    `skills: ${parsed.skills.length}, ` +
+    `experience: ${parsed.totalExperienceYears}y`,
+  );
 }
 async function processParseJob(data: ParseJobData, ctx: JobContext): Promise<void> {
   const { resumeId, filePath, fileType, text } = data;
