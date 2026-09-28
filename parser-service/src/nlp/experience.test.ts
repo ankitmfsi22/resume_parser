@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
+import { extractSection, SECTION_PATTERNS } from './sections';
 import {
-  extractExperienceSection,
   extractTotalExperienceYears,
   findYearRanges,
   mergeRanges,
 } from './experience';
 
-describe('extractExperienceSection', () => {
+describe('extractSection', () => {
   it('returns only the lines under the experience heading', () => {
     const resume = [
       'Ankit Singh',
@@ -16,13 +16,20 @@ describe('extractExperienceSection', () => {
       'B.Tech 2015 - 2019',
     ].join('\n');
 
-    const section = extractExperienceSection(resume);
+    const section = extractSection(resume, SECTION_PATTERNS.experience).join('\n');
     expect(section).toContain('Acme Corp');
     expect(section).not.toContain('B.Tech');
   });
 
-  it('returns undefined when there is no experience heading', () => {
-    expect(extractExperienceSection('Skills\nReact\nNode.js')).toBeUndefined();
+  it('returns an empty array when there is no experience heading', () => {
+    expect(extractSection('Skills\nReact\nNode.js', SECTION_PATTERNS.experience)).toEqual([]);
+  });
+
+  it('reads the education section the same way', () => {
+    const resume = ['Education', 'B.Tech 2015 - 2019', 'Skills', 'React'].join('\n');
+    const section = extractSection(resume, SECTION_PATTERNS.education).join('\n');
+    expect(section).toContain('B.Tech');
+    expect(section).not.toContain('React');
   });
 });
 

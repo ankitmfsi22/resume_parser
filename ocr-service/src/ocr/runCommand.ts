@@ -14,10 +14,10 @@ export async function runCommand(command: string, args: string[]): Promise<strin
     const error = err as NodeJS.ErrnoException & { stderr?: string };
 
     if (error.code === 'ENOENT') {
-      throw new Error(`Command not found: ${command}. Is it installed?`);
+      throw new Error(`Command not found: ${command}. Is it installed?`, { cause: err });
     }
 
     const details = error.stderr?.trim() || error.message;
-    throw new Error(`${command} failed: ${details}`);
+    throw new Error(`${command} failed: ${details}`, { cause: err });
   }
 }

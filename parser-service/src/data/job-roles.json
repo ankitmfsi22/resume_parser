@@ -1,0 +1,76 @@
+[
+  {
+    "name": "Frontend Developer",
+    "keywords": [
+      { "keyword": "react", "weight": 3 },
+      { "keyword": "javascript", "weight": 3 },
+      { "keyword": "typescript", "weight": 2 },
+      { "keyword": "next.js", "weight": 2 },
+      { "keyword": "vue.js", "weight": 2 },
+      { "keyword": "angular", "weight": 2 },
+      { "keyword": "redux", "weight": 2 },
+      { "keyword": "html", "weight": 1 },
+      { "keyword": "css", "weight": 1 },
+      { "keyword": "tailwind css", "weight": 1 },
+      { "keyword": "figma", "weight": 1 }
+    ]
+  },
+  {
+    "name": "Backend Developer",
+    "keywords": [
+      { "keyword": "node.js", "weight": 3 },
+      { "keyword": "python", "weight": 3 },
+      { "keyword": "java", "weight": 3 },
+      { "keyword": "express", "weight": 2 },
+      { "keyword": "mongodb", "weight": 2 },
+      { "keyword": "postgresql", "weight": 2 },
+      { "keyword": "mysql", "weight": 2 },
+      { "keyword": "rest api", "weight": 2 },
+      { "keyword": "graphql", "weight": 2 },
+      { "keyword": "redis", "weight": 1 },
+      { "keyword": "rabbitmq", "weight": 1 }
+    ]
+  },
+  {
+    "name": "Full Stack Developer",
+    "keywords": [
+      { "keyword": "react", "weight": 3 },
+      { "keyword": "node.js", "weight": 3 },
+      { "keyword": "javascript", "weight": 2 },
+      { "keyword": "typescript", "weight": 2 },
+      { "keyword": "mongodb", "weight": 2 },
+      { "keyword": "express", "weight": 2 },
+      { "keyword": "rest api", "weight": 2 },
+      { "keyword": "html", "weight": 1 },
+      { "keyword": "css", "weight": 1 },
+      { "keyword": "git", "weight": 1 }
+    ]
+  },
+  {
+    "name": "Mobile Developer",
+    "keywords": [
+      { "keyword": "react native", "weight": 3 },
+      { "keyword": "flutter", "weight": 3 },
+      { "keyword": "kotlin", "weight": 3 },
+      { "keyword": "swift", "weight": 3 },
+      { "keyword": "expo", "weight": 2 },
+      { "keyword": "firebase", "weight": 2 },
+      { "keyword": "javascript", "weight": 1 },
+      { "keyword": "redux", "weight": 1 }
+    ]
+  },
+  {
+    "name": "DevOps Engineer",
+    "keywords": [
+      { "keyword": "docker", "weight": 3 },
+      { "keyword": "kubernetes", "weight": 3 },
+      { "keyword": "aws", "weight": 3 },
+      { "keyword": "ci/cd", "weight": 2 },
+      { "keyword": "jenkins", "weight": 2 },
+      { "keyword": "terraform", "weight": 2 },
+      { "keyword": "azure", "weight": 2 },
+      { "keyword": "nginx", "weight": 1 },
+      { "keyword": "git", "weight": 1 }
+    ]
+  }
+]

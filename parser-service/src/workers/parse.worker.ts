@@ -7,9 +7,9 @@ import {
   type ParseJobData,
 } from '@resume-parser/shared';
 import { extractText } from '../extractors';
-import { enqueueOcrJob } from '../queues';
 import { hasEnoughText, requiresOcrBeforeExtraction } from '../routing';
-import { extractFields } from '../nlp';
+import { computeRoleMatches, extractFields } from '../nlp';
+import { enqueueInsightsJob, enqueueOcrJob } from '../queues';
 
 async function sendToOcr(data: ParseJobData, reason: string): Promise<void> {
   const { resumeId, filePath, fileType } = data;
@@ -21,24 +21,25 @@ async function sendToOcr(data: ParseJobData, reason: string): Promise<void> {
 
 async function saveParsedText(resumeId: string, rawText: string, attempt: number): Promise<void> {
   const parsed = extractFields(rawText);
-
+  const roleMatches = await computeRoleMatches(parsed.skills);
   const updated = await Resume.findByIdAndUpdate(resumeId, {
     rawText,
     parsed,
+    roleMatches,
     status: 'parsed',
     error: null,
     attempts: attempt,
   });
-
   if (!updated) {
     throw new Error(`Resume not found: ${resumeId}`);
   }
 
+  enqueueInsightsJob({ resumeId });
   console.log(
-    `[resume ${resumeId}] Parsed — ` +
-    `name: ${parsed.name ?? 'not found'}, ` +
-    `skills: ${parsed.skills.length}, ` +
-    `experience: ${parsed.totalExperienceYears}y`,
+      `[resume ${resumeId}] Parsed — name: ${parsed.name ?? 'n/a'}, ` +
+      `skills: ${parsed.skills.length}, exp: ${parsed.experience.length} entries ` +
+      `(${parsed.totalExperienceYears}y), edu: ${parsed.education.length}, ` +
+      `best match: ${roleMatches[0]?.roleName ?? 'n/a'} ${roleMatches[0]?.matchPercentage ?? 0}%`,
   );
 }
 async function processParseJob(data: ParseJobData, ctx: JobContext): Promise<void> {
