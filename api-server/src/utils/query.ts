@@ -5,8 +5,8 @@ export interface ResumeFilters {
   role?: string;
   status?: string;
 }
-
 type MongoFilter = Record<string, unknown>;
+
 export function buildResumeFilter(filters: ResumeFilters): MongoFilter {
   const query: MongoFilter = {};
 
@@ -29,7 +29,9 @@ export function buildResumeFilter(filters: ResumeFilters): MongoFilter {
   if (filters.role || filters.minScore !== undefined) {
     const match: Record<string, unknown> = {};
     if (filters.role) match.roleName = filters.role;
-    if (filters.minScore !== undefined) match.matchPercentage = { $gte: filters.minScore };
+    const minScore = filters.minScore ?? (filters.role ? 1 : undefined);
+    if (minScore !== undefined) match.matchPercentage = { $gte: minScore };
+
     query.roleMatches = { $elemMatch: match };
   }
 

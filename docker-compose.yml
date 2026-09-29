@@ -37,9 +37,109 @@ services:
     networks:
       - rp-network
 
+  api-server:
+    build:
+      context: .
+      dockerfile: api-server/Dockerfile
+    container_name: rp-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      MONGO_URI: mongodb://mongo:27017/${MONGO_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      UPLOAD_DIR: /app/uploads
+      MAX_FILE_SIZE_MB: 10
+      MAX_FILES_PER_UPLOAD: 10
+      CORS_ORIGIN: http://localhost
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - rp-network
+
+  parser-service:
+    build:
+      context: .
+      dockerfile: parser-service/Dockerfile
+    container_name: rp-parser
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongo:27017/${MONGO_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - rp-network
+
+  ocr-service:
+    build:
+      context: .
+      dockerfile: ocr-service/Dockerfile
+    container_name: rp-ocr
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongo:27017/${MONGO_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      OCR_TEMP_DIR: /tmp/ocr
+      OCR_LANGUAGE: eng
+      OCR_DPI: 300
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - rp-network
+
+  insights-worker:
+    build:
+      context: .
+      dockerfile: insights-worker/Dockerfile
+    container_name: rp-insights
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      MONGO_URI: mongodb://mongo:27017/${MONGO_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - rp-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: rp-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api-server
+    networks:
+      - rp-network
+
 volumes:
   mongo_data:
   rabbitmq_data:
+  uploads:
 
 networks:
   rp-network:

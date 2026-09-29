@@ -20,8 +20,8 @@ describe('scoreRole', () => {
   });
 
   it('weights important skills more heavily', () => {
-    const heavy = scoreRole(['React', 'JavaScript'], frontend); // 6 of 8
-    const light = scoreRole(['HTML', 'CSS'], frontend); // 2 of 8
+    const heavy = scoreRole(['React', 'JavaScript'], frontend);
+    const light = scoreRole(['HTML', 'CSS'], frontend);
     expect(heavy.matchPercentage).toBe(75);
     expect(light.matchPercentage).toBe(25);
   });

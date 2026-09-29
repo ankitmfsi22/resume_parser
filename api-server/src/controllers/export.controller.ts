@@ -15,10 +15,63 @@ const COLUMNS = [
   'Match %',
   'Status',
 ];
+export interface CsvRowInput {
+  fileName: string;
+  status: string;
+  parsed?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    location?: string;
+    skills?: string[];
+    totalExperienceYears?: number;
+    education?: { degree?: string; university?: string }[];
+  };
+  roleMatches?: { roleName: string; matchPercentage: number }[];
+}
 
-function csvCell(value: unknown): string {
+export function csvCell(value: unknown): string {
   const text = value === null || value === undefined ? '' : String(value);
   return `"${text.replace(/"/g, '""')}"`;
+}
+
+export function buildCsvRow(resume: {
+  fileName: string;
+  status: string;
+  parsed?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    location?: string;
+    skills?: string[];
+    totalExperienceYears?: number;
+    education?: { degree?: string; university?: string }[];
+  };
+  roleMatches?: { roleName: string; matchPercentage: number }[];
+}): string {
+  const best = [...(resume.roleMatches ?? [])].sort(
+    (a, b) => b.matchPercentage - a.matchPercentage,
+  )[0];
+
+  const education = (resume.parsed?.education ?? [])
+    .map((e) => [e.degree, e.university].filter(Boolean).join(', '))
+    .join(' | ');
+
+  return [
+    resume.fileName,
+    resume.parsed?.name,
+    resume.parsed?.email,
+    resume.parsed?.phone,
+    resume.parsed?.location,
+    (resume.parsed?.skills ?? []).join('; '),
+    resume.parsed?.totalExperienceYears,
+    education,
+    best?.roleName,
+    best?.matchPercentage,
+    resume.status,
+  ]
+    .map(csvCell)
+    .join(',');
 }
 
 export const exportResumesCsv = asyncHandler(async (req, res) => {
@@ -35,29 +88,7 @@ export const exportResumesCsv = asyncHandler(async (req, res) => {
 
   const resumes = await Resume.find(filter).select('-rawText').sort({ createdAt: -1 }).lean();
 
-  const rows = resumes.map((r) => {
-    const best = [...(r.roleMatches ?? [])].sort(
-      (a, b) => b.matchPercentage - a.matchPercentage,
-    )[0];
-
-    const education = (r.parsed?.education ?? [])
-      .map((e) => [e.degree, e.university].filter(Boolean).join(', '))
-      .join(' | ');
-
-    return [
-      r.fileName,
-      r.parsed?.name,
-      r.parsed?.email,
-      r.parsed?.phone,
-      r.parsed?.location,
-      (r.parsed?.skills ?? []).join('; '),
-      r.parsed?.totalExperienceYears,
-      education,
-      best?.roleName,
-      best?.matchPercentage,
-      r.status,
-    ].map(csvCell).join(',');
-  });
+  const rows = resumes.map((r) => buildCsvRow(r));
 
   const csv = [COLUMNS.map(csvCell).join(','), ...rows].join('\n');
 

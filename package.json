@@ -2,7 +2,7 @@
   "name": "resume-parser",
   "version": "1.0.0",
   "private": true,
-  "workspaces": ["packages/*", "api-server", "parser-service", "ocr-service"],
+  "workspaces": ["packages/*", "api-server", "parser-service", "ocr-service", "insights-worker"],
   "scripts": {
     "build:shared": "npm run build -w @resume-parser/shared",
     "dev:shared": "npm run dev -w @resume-parser/shared",
