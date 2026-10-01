@@ -436,9 +436,10 @@ docker compose exec api-server sh -c 'rm -f /app/uploads/*'
 ---
 
 ## Diagram flow 
-<img width="754" height="491" alt="Screenshot 2026-09-18 at 8 38 54 PM" src="https://github.com/user-attachments/assets/0c4ecea3-ee4e-49c8-85f8-072c0aae68d7" />
- <img width="876" height="520" alt="Screenshot 2026-09-17 at 9 32 17 PM" src="https://github.com/user-attachments/assets/28842864-3f4d-4a1d-abc6-5a42efa3fbf6" />
-<img width="871" height="499" alt="Screenshot 2026-09-17 at 9 34 49 PM" src="https://github.com/user-attachments/assets/55798635-b937-41b3-99e9-45de12bf3629" />
-<img width="611" height="499" alt="Screenshot 2026-09-17 at 9 35 37 PM" src="https://github.com/user-attachments/assets/ab174ace-6a18-4a6e-a349-5466787695f1" />
-<img width="918" height="499" alt="Screenshot 2026-09-17 at 9 34 05 PM" src="https://github.com/user-attachments/assets/cdd7a6e7-840e-436a-939d-605322eb5dd7" />
 
+
+ <img width="735" height="502" alt="Screenshot 2026-10-01 at 3 56 24 PM" src="https://github.com/user-attachments/assets/8eab5916-4031-4eab-8ba5-67253e253ed1" />
+<img width="942" height="536" alt="Screenshot 2026-10-01 at 4 06 10 PM" src="https://github.com/user-attachments/assets/a9fb3eeb-a6ac-4cde-baa6-2793ac4f0368" />
+<img width="489" height="488" alt="Screenshot 2026-10-01 at 4 16 24 PM" src="https://github.com/user-attachments/assets/4949657a-627c-4972-9aae-52f0bf493ac5" />
+<img width="533" height="469" alt="Screenshot 2026-10-01 at 4 31 25 PM" src="https://github.com/user-attachments/assets/7709dc7b-896c-4732-bccf-e94d6b29d5e8" />
+<img width="952" height="501" alt="Screenshot 2026-10-01 at 4 39 48 PM" src="https://github.com/user-attachments/assets/5632628d-d23a-48e0-9b3c-aa9fdca413a3" />
