@@ -3,21 +3,29 @@ import { describe, expect, it } from 'vitest';
 import StatusBadge from './StatusBadge';
 
 describe('StatusBadge', () => {
-  it('shows the status text', () => {
+  it('shows a plain label instead of the internal status', () => {
     render(<StatusBadge status="parsed" />);
-    expect(screen.getByText('parsed')).toBeInTheDocument();
+    expect(screen.getByText('Complete')).toBeInTheDocument();
   });
 
-  it('uses a different colour for each status', () => {
-    const { container: parsed } = render(<StatusBadge status="parsed" />);
+  it('groups every in-progress status under one label', () => {
+    const { container: uploaded } = render(<StatusBadge status="uploaded" />);
+    const { container: ocr } = render(<StatusBadge status="ocr" />);
+
+    expect(uploaded.textContent).toBe('Processing');
+    expect(ocr.textContent).toBe('Processing');
+  });
+
+  it('uses a different colour for complete and failed', () => {
+    const { container: complete } = render(<StatusBadge status="parsed" />);
     const { container: failed } = render(<StatusBadge status="failed" />);
 
-    expect(parsed.firstChild).toHaveClass('bg-green-100');
+    expect(complete.firstChild).toHaveClass('bg-green-100');
     expect(failed.firstChild).toHaveClass('bg-red-100');
   });
 
-  it('falls back to a neutral style for an unknown status', () => {
-    const { container } = render(<StatusBadge status="something-new" />);
-    expect(container.firstChild).toHaveClass('bg-gray-100');
+  it('falls back to the raw value for an unknown status', () => {
+    render(<StatusBadge status="something-new" />);
+    expect(screen.getByText('something-new')).toBeInTheDocument();
   });
 });

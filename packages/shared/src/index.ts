@@ -12,7 +12,15 @@ export {
   type IRoleMatch,
 } from './models/Resume';
 export { JobRole, type IJobRole, type IKeyword } from './models/JobRole';
-export { Insight, type IInsight } from './models/Insight';
+export {
+  Insight,
+  type IInsight,
+  type ISkillCount,
+  type IUniversityCount,
+  type ILocationCount,
+  type IExperienceBucket,
+  type IRoleCount,
+} from './models/Insight';
 export {
   EXCHANGES,
   QUEUES,

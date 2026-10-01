@@ -45,16 +45,34 @@ export interface Resume {
 export interface Insights {
   topSkills: { skill: string; count: number }[];
   commonUniversities: { university: string; count: number }[];
+  topLocations: { location: string; count: number }[];
+  experienceDistribution: { range: string; count: number }[];
+  roleDistribution: { roleName: string; count: number }[];
   averageExperience: number;
   totalResumes: number;
   parsedCount: number;
   failedCount: number;
 }
-
 export interface ResumeFilters {
   keyword?: string;
   location?: string;
   role?: string;
   minScore?: string;
   status?: string;
+  skill?: string;
+  university?: string;
+  minExperience?: string;
+  maxExperience?: string;
+  page?: string;
+  limit?: string;
+  sortBy?: string;
+  order?: string;
+}
+export interface ResumeListResponse {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  count: number;
+  data: Resume[];
 }

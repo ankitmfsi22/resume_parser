@@ -8,7 +8,13 @@ const ROLES = [
   'DevOps Engineer',
 ];
 
-const STATUSES = ['uploaded', 'ocr', 'parsed', 'failed'];
+const STATUSES = [
+  { value: '', label: 'All statuses' },
+  { value: 'parsed', label: 'Complete' },
+  { value: 'failed', label: 'Failed' },
+  { value: 'ocr', label: 'Processing (OCR)' },
+  { value: 'uploaded', label: 'Processing (queued)' },
+];
 
 interface Props {
   filters: ResumeFilters;
@@ -64,15 +70,14 @@ export default function Filters({ filters, onChange, onReset, csvUrl }: Props) {
           className="border rounded px-3 py-2 text-sm"
         />
 
-        <select
+          <select
           value={filters.status ?? ''}
           onChange={(e) => update('status', e.target.value)}
           className="border rounded px-3 py-2 text-sm"
         >
-          <option value="">All statuses</option>
           {STATUSES.map((status) => (
-            <option key={status} value={status}>
-              {status}
+            <option key={status.value} value={status.value}>
+              {status.label}
             </option>
           ))}
         </select>

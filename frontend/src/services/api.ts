@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Insights, Resume, ResumeFilters } from '../types';
+import type { Insights, Resume, ResumeFilters, ResumeListResponse} from '../types';
 
 const api = axios.create({ baseURL: '/api' });
 
@@ -22,10 +22,8 @@ function cleanFilters(filters: ResumeFilters): Record<string, string> {
   ) as Record<string, string>;
 }
 
-export async function fetchResumes(
-  filters: ResumeFilters = {},
-): Promise<{ total: number; data: Resume[] }> {
-  const { data } = await api.get<{ total: number; data: Resume[] }>('/resumes', {
+export async function fetchResumes(filters: ResumeFilters = {}): Promise<ResumeListResponse> {
+  const { data } = await api.get<ResumeListResponse>('/resumes', {
     params: cleanFilters(filters),
   });
   return data;

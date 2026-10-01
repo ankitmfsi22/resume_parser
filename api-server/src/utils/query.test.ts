@@ -54,3 +54,27 @@ describe('buildResumeFilter', () => {
     expect(filter['parsed.location']).toBeDefined();
   });
 });
+it('matches a skill exactly when drilling into a chart', () => {
+  const filter = buildResumeFilter({ skill: 'React' });
+
+  expect(filter['parsed.skills']).toBe('React');
+});
+
+it('builds a range for an experience bucket', () => {
+  const filter = buildResumeFilter({ minExperience: 3, maxExperience: 5 });
+
+  expect(filter['parsed.totalExperienceYears']).toEqual({ $gte: 3, $lte: 5 });
+});
+
+it('builds an open-ended range for the top bucket', () => {
+  const filter = buildResumeFilter({ minExperience: 11 });
+
+  expect(filter['parsed.totalExperienceYears']).toEqual({ $gte: 11 });
+});
+
+it('escapes regex characters in a keyword', () => {
+  const filter = buildResumeFilter({ keyword: 'C++' });
+  const or = filter.$or as { 'parsed.skills'?: { $regex: string } }[];
+
+  expect(or[0]['parsed.skills']?.$regex).toBe('C\\+\\+');
+});

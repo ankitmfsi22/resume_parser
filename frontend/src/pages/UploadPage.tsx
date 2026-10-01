@@ -1,8 +1,11 @@
-import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { fetchResume, uploadResumes } from '../services/api';
 import StatusBadge from '../components/StatusBadge';
 import type { Parsed } from '../types';
+import ErrorState from '../components/ErrorState';
+import Toast from '../components/Toast';
+import { useToasts } from '../hooks/useToasts';
+import { friendlyRequestError, friendlyResumeError } from '../utils/errors';
 
 const POLL_INTERVAL_MS = 2000;
 const FINAL_STATUSES = ['parsed', 'failed'];
@@ -12,6 +15,7 @@ interface TrackedResume {
   fileName: string;
   status: string;
   parsed?: Parsed;
+  error?: string | null;
 }
 
 export default function UploadPage() {
@@ -20,8 +24,9 @@ export default function UploadPage() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toasts, show, dismiss } = useToasts();
 
-  async function handleUpload(): Promise<void> {
+    async function handleUpload(): Promise<void> {
     if (files.length === 0) return;
 
     setUploading(true);
@@ -32,12 +37,10 @@ export default function UploadPage() {
       setTracked((prev) => [...created, ...prev]);
       setFiles([]);
       if (fileInputRef.current) fileInputRef.current.value = '';
+
+      show(`${created.length} resume(s) queued for processing`);
     } catch (err) {
-      const message =
-        axios.isAxiosError(err) && err.response?.data?.error?.message
-          ? err.response.data.error.message
-          : 'Upload failed';
-      setError(message);
+      setError(friendlyRequestError(err).message);
     } finally {
       setUploading(false);
     }
@@ -52,7 +55,7 @@ export default function UploadPage() {
           unfinished.map(async (item) => {
             try {
               const resume = await fetchResume(item.id);
-              return { id: item.id, status: resume.status, parsed: resume.parsed };
+              return { id: item.id, status: resume.status, parsed: resume.parsed, error: resume.error,};
             } catch {
               return null;
             }
@@ -101,7 +104,11 @@ export default function UploadPage() {
           {uploading ? 'Uploading...' : 'Upload'}
         </button>
 
-        {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
+        {error && (
+          <div className="mt-4">
+            <ErrorState message={error} />
+          </div>
+        )}
       </div>
 
       {tracked.length > 0 && (
@@ -123,12 +130,16 @@ export default function UploadPage() {
                   <td className="py-2">
                     <StatusBadge status={item.status} />
                   </td>
-                  <td className="py-2 text-gray-600">
-                    {item.status === 'parsed' && item.parsed
-                      ? `${item.parsed.name ?? 'Name not found'} · ${item.parsed.skills.length} skills`
-                      : item.status === 'failed'
-                        ? 'Could not be parsed'
-                        : 'Processing...'}
+                 <td className="py-2">
+                    {item.status === 'parsed' && item.parsed ? (
+                      <span className="text-gray-600">
+                        {item.parsed.name ?? 'Name not found'} · {item.parsed.skills.length} skills
+                      </span>
+                    ) : item.status === 'failed' ? (
+                      <span className="text-red-600">{friendlyResumeError(item.error)}</span>
+                    ) : (
+                      <span className="text-gray-400">Reading resume...</span>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -136,6 +147,11 @@ export default function UploadPage() {
           </table>
         </div>
       )}
+      <div className="fixed bottom-6 right-6 space-y-2 z-50">
+        {toasts.map((toast) => (
+          <Toast key={toast.id} toast={toast} onDismiss={dismiss} />
+        ))}
+      </div>
     </div>
   );
 }

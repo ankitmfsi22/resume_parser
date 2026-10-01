@@ -76,22 +76,26 @@ export function buildCsvRow(resume: {
 
 export const exportResumesCsv = asyncHandler(async (req, res) => {
   const q = req.query as Record<string, unknown>;
-  const minScore = q.minScore !== undefined ? Number(q.minScore) : undefined;
-
+  const num = (value: unknown): number | undefined => {
+    if (value === undefined || value === '') return undefined;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  };
+  const text = (value: unknown): string | undefined => (value ? String(value) : undefined);
   const filter = buildResumeFilter({
-    keyword: q.keyword ? String(q.keyword) : undefined,
-    location: q.location ? String(q.location) : undefined,
-    role: q.role ? String(q.role) : undefined,
-    status: q.status ? String(q.status) : undefined,
-    minScore: Number.isFinite(minScore) ? minScore : undefined,
+    keyword: text(q.keyword),
+    location: text(q.location),
+    role: text(q.role),
+    status: text(q.status),
+    skill: text(q.skill),
+    university: text(q.university),
+    minScore: num(q.minScore),
+    minExperience: num(q.minExperience),
+    maxExperience: num(q.maxExperience),
   });
-
   const resumes = await Resume.find(filter).select('-rawText').sort({ createdAt: -1 }).lean();
-
-  const rows = resumes.map((r) => buildCsvRow(r));
-
+  const rows = resumes.map((r) => buildCsvRow(r as CsvRowInput));
   const csv = [COLUMNS.map(csvCell).join(','), ...rows].join('\n');
-
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', 'attachment; filename="resumes.csv"');
   res.send(csv);
