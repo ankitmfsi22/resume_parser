@@ -17,12 +17,20 @@ async function start(): Promise<void> {
   const server = app.listen(env.PORT, () => {
     console.log(`API running on http://localhost:${env.PORT} [${env.NODE_ENV}]`);
   });
+   const closeConnections = async (): Promise<void> => {
+    await closeRabbit();
+    await disconnectMongo();
+  };
+
   const shutdown = (signal: string): void => {
     console.log(`\n${signal} received, shutting down...`);
-    server.close(async () => {
-      await closeRabbit();
-      await disconnectMongo();
-      process.exit(0);
+    server.close(() => {
+      closeConnections()
+        .then(() => process.exit(0))
+        .catch((err: unknown) => {
+          console.error('Shutdown failed:', err);
+          process.exit(1);
+        });
     });
   };
   process.on('SIGINT', () => shutdown('SIGINT'));
