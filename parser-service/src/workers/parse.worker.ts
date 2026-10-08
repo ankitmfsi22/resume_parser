@@ -36,7 +36,7 @@ async function saveParsedText(resumeId: string, rawText: string, attempt: number
 
   enqueueInsightsJob({ resumeId });
   console.log(
-      `[resume ${resumeId}] Parsed — name: ${parsed.name ?? 'n/a'}, ` +
+    `[resume ${resumeId}] Parsed — name: ${parsed.name ?? 'n/a'}, ` +
       `skills: ${parsed.skills.length}, exp: ${parsed.experience.length} entries ` +
       `(${parsed.totalExperienceYears}y), edu: ${parsed.education.length}, ` +
       `best match: ${roleMatches[0]?.roleName ?? 'n/a'} ${roleMatches[0]?.matchPercentage ?? 0}%`,
@@ -64,11 +64,7 @@ async function processParseJob(data: ParseJobData, ctx: JobContext): Promise<voi
   await saveParsedText(resumeId, rawText, ctx.attempt);
 }
 
-async function markResumeFailed(
-  data: ParseJobData,
-  error: Error,
-  attempts: number,
-): Promise<void> {
+async function markResumeFailed(data: ParseJobData, error: Error, attempts: number): Promise<void> {
   await Resume.findByIdAndUpdate(data.resumeId, {
     status: 'failed',
     error: error.message,

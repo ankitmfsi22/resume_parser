@@ -44,10 +44,10 @@ export default function ResumeListPage() {
   const [searchParams] = useSearchParams();
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [total, setTotal] = useState(0);
-   const [error, setError] = useState<RequestError | null>(null);
+  const [error, setError] = useState<RequestError | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [loading, setLoading] = useState(true);
-    const [filters, setFilters] = useState<ResumeFilters>(() => ({
+  const [filters, setFilters] = useState<ResumeFilters>(() => ({
     keyword: searchParams.get('keyword') ?? '',
     location: searchParams.get('location') ?? '',
     role: searchParams.get('role') ?? '',
@@ -59,7 +59,7 @@ export default function ResumeListPage() {
     maxExperience: searchParams.get('maxExperience') ?? '',
   }));
 
-    useEffect(() => {
+  useEffect(() => {
     const timer = setTimeout(() => {
       void (async () => {
         setLoading(true);
@@ -122,7 +122,7 @@ export default function ResumeListPage() {
         onReset={() => applyFilters(EMPTY_FILTERS)}
         csvUrl={csvDownloadUrl(filters)}
       />
-       {error && (
+      {error && (
         <div className="mb-6">
           <ErrorState
             message={error.message}
@@ -161,7 +161,7 @@ export default function ResumeListPage() {
               return (
                 <tr
                   key={resume._id}
-                   onClick={() => navigate(`/resumes/${resume._id}`)}
+                  onClick={() => navigate(`/resumes/${resume._id}`)}
                   className="border-b last:border-0 hover:bg-blue-50 cursor-pointer"
                 >
                   <td className="px-6 py-3">
@@ -182,9 +182,7 @@ export default function ResumeListPage() {
                     {match ? (
                       <>
                         {!filters.role && <span className="text-gray-700">{match.roleName} </span>}
-                        <span className="text-blue-600 font-medium">
-                          {match.matchPercentage}%
-                        </span>
+                        <span className="text-blue-600 font-medium">{match.matchPercentage}%</span>
                       </>
                     ) : (
                       '—'

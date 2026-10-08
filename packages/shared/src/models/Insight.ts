@@ -39,10 +39,7 @@ export interface IInsight {
   updatedAt: Date;
 }
 
-const skillCountSchema = new Schema<ISkillCount>(
-  { skill: String, count: Number },
-  { _id: false },
-);
+const skillCountSchema = new Schema<ISkillCount>({ skill: String, count: Number }, { _id: false });
 
 const universityCountSchema = new Schema<IUniversityCount>(
   { university: String, count: Number },
@@ -59,10 +56,7 @@ const experienceBucketSchema = new Schema<IExperienceBucket>(
   { _id: false },
 );
 
-const roleCountSchema = new Schema<IRoleCount>(
-  { roleName: String, count: Number },
-  { _id: false },
-);
+const roleCountSchema = new Schema<IRoleCount>({ roleName: String, count: Number }, { _id: false });
 
 const insightSchema = new Schema<IInsight>(
   {

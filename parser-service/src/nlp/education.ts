@@ -15,7 +15,7 @@ export function isDegreeLine(line: string): boolean {
 export function cleanUniversity(value: string): string {
   return value
     .replace(/^(from|at)\s+/i, '')
-    .replace(/,\s*[A-Z]{2}\s*$/, '') 
+    .replace(/,\s*[A-Z]{2}\s*$/, '')
     .replace(/[,.\s]+$/, '')
     .replace(/\s{2,}/g, ' ')
     .trim();

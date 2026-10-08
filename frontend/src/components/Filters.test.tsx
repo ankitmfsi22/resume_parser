@@ -25,9 +25,7 @@ describe('Filters', () => {
 
     await userEvent.selectOptions(screen.getByDisplayValue('All roles'), 'Frontend Developer');
 
-    expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ role: 'Frontend Developer' }),
-    );
+    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ role: 'Frontend Developer' }));
   });
 
   it('calls onReset when the reset button is clicked', async () => {

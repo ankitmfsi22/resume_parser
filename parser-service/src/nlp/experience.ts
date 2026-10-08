@@ -76,10 +76,7 @@ function parseDates(line: string): { startDate?: Date; endDate?: Date } {
   if (results.length === 0) return {};
 
   const startDate = results[0].start?.date();
-  const endDate =
-    results.length > 1
-      ? results[1].start?.date()
-      : results[0].end?.date();
+  const endDate = results.length > 1 ? results[1].start?.date() : results[0].end?.date();
 
   const isOngoing = /\b(present|current|now|till\s+date)\b/i.test(line);
 

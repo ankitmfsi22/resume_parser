@@ -8,9 +8,7 @@ const envSchema = z.object({
   MONGO_URI: z
     .string()
     .regex(/^mongodb(\+srv)?:\/\/.+/, 'must start with mongodb:// or mongodb+srv://'),
-    RABBITMQ_URL: z
-    .string()
-    .regex(/^amqps?:\/\/.+/, 'must start with amqp:// or amqps://'),
+  RABBITMQ_URL: z.string().regex(/^amqps?:\/\/.+/, 'must start with amqp:// or amqps://'),
 });
 
 const result = envSchema.safeParse(process.env);

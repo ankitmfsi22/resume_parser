@@ -32,12 +32,7 @@ export {
   retryQueueName,
 } from './messaging/constants';
 export type { ParseJobData, OcrJobData, InsightsJobData } from './messaging/types';
-export {
-  connectRabbit,
-  getChannel,
-  isRabbitConnected,
-  closeRabbit,
-} from './messaging/connection';
+export { connectRabbit, getChannel, isRabbitConnected, closeRabbit } from './messaging/connection';
 export { assertTopology } from './messaging/topology';
 export { publishJob } from './messaging/publisher';
 export { startConsumer, type JobContext } from './messaging/consumer';

@@ -2,10 +2,28 @@ import nlp from 'compromise';
 
 const HEADER_LINE_COUNT = 15;
 const NON_NAME_WORDS = [
-  'resume', 'curriculum', 'vitae', 'profile', 'summary', 'objective',
-  'contact', 'experience', 'education', 'skills', 'projects',
-  'developer', 'engineer', 'manager', 'analyst', 'designer',
-  'consultant', 'intern', 'senior', 'junior', 'lead', 'architect',
+  'resume',
+  'curriculum',
+  'vitae',
+  'profile',
+  'summary',
+  'objective',
+  'contact',
+  'experience',
+  'education',
+  'skills',
+  'projects',
+  'developer',
+  'engineer',
+  'manager',
+  'analyst',
+  'designer',
+  'consultant',
+  'intern',
+  'senior',
+  'junior',
+  'lead',
+  'architect',
 ];
 
 function headerLines(text: string): string[] {

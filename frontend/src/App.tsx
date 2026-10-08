@@ -17,9 +17,7 @@ export default function App() {
       <header className="bg-white border-b sticky top-0 z-30 shadow-sm">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex items-center h-14">
-            <h1 className="font-semibold text-gray-900">
-              Resume Parser &amp; Insight Dashboard
-            </h1>
+            <h1 className="font-semibold text-gray-900">Resume Parser &amp; Insight Dashboard</h1>
           </div>
 
           <nav className="flex gap-1">

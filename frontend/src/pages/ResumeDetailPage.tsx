@@ -28,7 +28,7 @@ export default function ResumeDetailPage() {
   const [loadError, setLoadError] = useState<RequestError | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
-   useEffect(() => {
+  useEffect(() => {
     if (!id) return;
 
     void (async () => {
@@ -52,9 +52,9 @@ export default function ResumeDetailPage() {
     }
   }
 
-    if (loading) return <p className="text-sm text-gray-500">Loading resume...</p>;
+  if (loading) return <p className="text-sm text-gray-500">Loading resume...</p>;
 
-    if (loadError || !resume) {
+  if (loadError || !resume) {
     return (
       <div className="space-y-4">
         <button
@@ -89,9 +89,7 @@ export default function ResumeDetailPage() {
       </div>
 
       <div className="bg-white rounded border p-6">
-        <h1 className="text-2xl font-semibold text-gray-900">
-          {parsed?.name ?? 'Name not found'}
-        </h1>
+        <h1 className="text-2xl font-semibold text-gray-900">{parsed?.name ?? 'Name not found'}</h1>
         <p className="text-sm text-gray-400 mt-1">{resume.fileName}</p>
 
         <dl className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 text-sm">
@@ -188,7 +186,7 @@ export default function ResumeDetailPage() {
             </div>
           </Section>
 
-             {resume.error && (
+          {resume.error && (
             <Section title="Why this failed">
               <p className="text-sm text-red-700">{friendlyResumeError(resume.error)}</p>
 
@@ -197,9 +195,7 @@ export default function ResumeDetailPage() {
                 <summary className="text-xs text-gray-400 cursor-pointer hover:text-gray-600">
                   Technical details
                 </summary>
-                <p className="text-xs text-gray-500 mt-1.5 font-mono break-all">
-                  {resume.error}
-                </p>
+                <p className="text-xs text-gray-500 mt-1.5 font-mono break-all">{resume.error}</p>
               </details>
             </Section>
           )}

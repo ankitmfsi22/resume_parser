@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { extractSection, SECTION_PATTERNS } from './sections';
-import {
-  extractTotalExperienceYears,
-  findYearRanges,
-  mergeRanges,
-} from './experience';
+import { extractTotalExperienceYears, findYearRanges, mergeRanges } from './experience';
 
 describe('extractSection', () => {
   it('returns only the lines under the experience heading', () => {
@@ -49,11 +45,21 @@ describe('findYearRanges', () => {
 
 describe('mergeRanges', () => {
   it('adds up separate periods', () => {
-    expect(mergeRanges([{ start: 2015, end: 2017 }, { start: 2019, end: 2022 }])).toBe(5);
+    expect(
+      mergeRanges([
+        { start: 2015, end: 2017 },
+        { start: 2019, end: 2022 },
+      ]),
+    ).toBe(5);
   });
 
   it('does not count overlapping periods twice', () => {
-    expect(mergeRanges([{ start: 2019, end: 2022 }, { start: 2021, end: 2023 }])).toBe(4);
+    expect(
+      mergeRanges([
+        { start: 2019, end: 2022 },
+        { start: 2021, end: 2023 },
+      ]),
+    ).toBe(4);
   });
 
   it('returns zero for no ranges', () => {

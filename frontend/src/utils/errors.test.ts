@@ -23,9 +23,7 @@ describe('friendlyResumeError', () => {
   });
 
   it('explains an unreadable scan', () => {
-    expect(friendlyResumeError('OCR failed: OCR produced no text')).toMatch(
-      /blank|scan quality/i,
-    );
+    expect(friendlyResumeError('OCR failed: OCR produced no text')).toMatch(/blank|scan quality/i);
   });
 
   it('explains a damaged PDF', () => {

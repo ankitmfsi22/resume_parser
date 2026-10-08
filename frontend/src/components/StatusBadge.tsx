@@ -22,8 +22,6 @@ export default function StatusBadge({ status }: { status: string }) {
   const style = STYLES[key] ?? 'bg-gray-100 text-gray-700';
 
   return (
-    <span className={`inline-block px-2 py-0.5 text-xs rounded font-medium ${style}`}>
-      {label}
-    </span>
+    <span className={`inline-block px-2 py-0.5 text-xs rounded font-medium ${style}`}>{label}</span>
   );
 }

@@ -13,7 +13,10 @@ export function normalizeOcrText(text: string): string {
     .trim();
 }
 export function combinePageTexts(pageTexts: string[]): string {
-  return pageTexts.map((t) => t.trim()).filter(Boolean).join('\n\n');
+  return pageTexts
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .join('\n\n');
 }
 async function createTempDir(): Promise<string> {
   const base = path.resolve(env.OCR_TEMP_DIR);
@@ -35,10 +38,7 @@ export interface OcrResult {
   pages: number;
 }
 
-export async function extractTextWithOcr(
-  filePath: string,
-  fileType: FileType,
-): Promise<OcrResult> {
+export async function extractTextWithOcr(filePath: string, fileType: FileType): Promise<OcrResult> {
   if (fileType === 'image') {
     const text = await imageToText(filePath);
     return { text: normalizeOcrText(text), pages: 1 };

@@ -26,7 +26,7 @@ export default function UploadPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toasts, show, dismiss } = useToasts();
 
-    async function handleUpload(): Promise<void> {
+  async function handleUpload(): Promise<void> {
     if (files.length === 0) return;
 
     setUploading(true);
@@ -55,7 +55,12 @@ export default function UploadPage() {
           unfinished.map(async (item) => {
             try {
               const resume = await fetchResume(item.id);
-              return { id: item.id, status: resume.status, parsed: resume.parsed, error: resume.error,};
+              return {
+                id: item.id,
+                status: resume.status,
+                parsed: resume.parsed,
+                error: resume.error,
+              };
             } catch {
               return null;
             }
@@ -130,7 +135,7 @@ export default function UploadPage() {
                   <td className="py-2">
                     <StatusBadge status={item.status} />
                   </td>
-                 <td className="py-2">
+                  <td className="py-2">
                     {item.status === 'parsed' && item.parsed ? (
                       <span className="text-gray-600">
                         {item.parsed.name ?? 'Name not found'} · {item.parsed.skills.length} skills

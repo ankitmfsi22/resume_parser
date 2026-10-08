@@ -10,9 +10,7 @@ const envSchema = z.object({
   MONGO_URI: z
     .string()
     .regex(/^mongodb(\+srv)?:\/\/.+/, 'must start with mongodb:// or mongodb+srv://'),
-   RABBITMQ_URL: z
-    .string()
-    .regex(/^amqps?:\/\/.+/, 'must start with amqp:// or amqps://'),
+  RABBITMQ_URL: z.string().regex(/^amqps?:\/\/.+/, 'must start with amqp:// or amqps://'),
 
   UPLOAD_DIR: z.string().min(1),
   MAX_FILE_SIZE_MB: z.coerce.number().positive().max(50),

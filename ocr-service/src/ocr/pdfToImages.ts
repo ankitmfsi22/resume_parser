@@ -6,13 +6,7 @@ import { runCommand } from './runCommand';
 export async function pdfToImages(pdfPath: string, outputDir: string): Promise<string[]> {
   await fs.mkdir(outputDir, { recursive: true });
   const prefix = path.join(outputDir, 'page');
-  await runCommand('pdftoppm', [
-    '-png',
-    '-r',
-    String(env.OCR_DPI),
-    pdfPath,
-    prefix,
-  ]);
+  await runCommand('pdftoppm', ['-png', '-r', String(env.OCR_DPI), pdfPath, prefix]);
   const files = await fs.readdir(outputDir);
   return files
     .filter((file) => file.endsWith('.png'))

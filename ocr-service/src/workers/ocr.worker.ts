@@ -13,9 +13,7 @@ import { enqueueParseJob } from '../queues';
 async function processOcrJob(data: OcrJobData, ctx: JobContext): Promise<void> {
   const { resumeId, filePath, fileType } = data;
 
-  console.log(
-    `resume ${resumeId}] Attempt ${ctx.attempt}/${ctx.maxAttempts}: OCR on ${fileType}`,
-  );
+  console.log(`resume ${resumeId}] Attempt ${ctx.attempt}/${ctx.maxAttempts}: OCR on ${fileType}`);
   await fs.access(filePath);
   const { text, pages } = await extractTextWithOcr(filePath, fileType);
   if (!text) {
@@ -28,11 +26,7 @@ async function processOcrJob(data: OcrJobData, ctx: JobContext): Promise<void> {
   );
 }
 
-async function markResumeFailed(
-  data: OcrJobData,
-  error: Error,
-  attempts: number,
-): Promise<void> {
+async function markResumeFailed(data: OcrJobData, error: Error, attempts: number): Promise<void> {
   await Resume.findByIdAndUpdate(data.resumeId, {
     status: 'failed',
     error: `OCR failed: ${error.message}`,

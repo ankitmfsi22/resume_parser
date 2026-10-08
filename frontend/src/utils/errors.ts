@@ -81,7 +81,10 @@ export function friendlyRequestError(error: unknown): RequestError {
         retryable: true,
       };
     case status >= 500:
-      return { message: 'The server ran into a problem. Please try again shortly.', retryable: true };
+      return {
+        message: 'The server ran into a problem. Please try again shortly.',
+        retryable: true,
+      };
     default:
       return { message: 'Something went wrong. Please try again.', retryable: true };
   }

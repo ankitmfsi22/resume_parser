@@ -19,10 +19,7 @@ export default function Toast({ toast, onDismiss }: Props) {
     return () => clearTimeout(timer);
   }, [toast.id, onDismiss]);
 
-  const style =
-    toast.type === 'success'
-      ? 'bg-green-600 text-white'
-      : 'bg-red-600 text-white';
+  const style = toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white';
 
   return (
     <div className={`${style} rounded shadow-lg px-4 py-3 flex items-start gap-3 max-w-sm`}>

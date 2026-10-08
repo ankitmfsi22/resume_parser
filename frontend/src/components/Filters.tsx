@@ -70,7 +70,7 @@ export default function Filters({ filters, onChange, onReset, csvUrl }: Props) {
           className="border rounded px-3 py-2 text-sm"
         />
 
-          <select
+        <select
           value={filters.status ?? ''}
           onChange={(e) => update('status', e.target.value)}
           className="border rounded px-3 py-2 text-sm"

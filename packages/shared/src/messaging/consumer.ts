@@ -67,9 +67,7 @@ export async function startConsumer<T>(options: ConsumerOptions<T>): Promise<voi
       });
       channel.ack(msg);
 
-      console.error(
-        `[${time}] [${queue}] Failed after ${maxAttempts} attempts: ${error.message}`,
-      );
+      console.error(`[${time}] [${queue}] Failed after ${maxAttempts} attempts: ${error.message}`);
 
       if (onFinalFailure) {
         await onFinalFailure(data, error, attempt).catch((dbErr: unknown) => {

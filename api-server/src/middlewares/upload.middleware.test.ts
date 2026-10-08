@@ -28,24 +28,20 @@ describe('upload middleware', () => {
   });
 
   it('rejects a file sent under the wrong field name', async () => {
-    const response = await request(app)
-      .post('/upload')
-      .attach('files', Buffer.from('%PDF-1.4'), {
-        filename: 'resume.pdf',
-        contentType: 'application/pdf',
-      });
+    const response = await request(app).post('/upload').attach('files', Buffer.from('%PDF-1.4'), {
+      filename: 'resume.pdf',
+      contentType: 'application/pdf',
+    });
 
     expect(response.status).toBe(400);
     expect(response.body.error.message).toMatch(/unexpected field/i);
   });
 
   it('accepts a PDF sent under the correct field name', async () => {
-    const response = await request(app)
-      .post('/upload')
-      .attach('resumes', Buffer.from('%PDF-1.4'), {
-        filename: 'resume.pdf',
-        contentType: 'application/pdf',
-      });
+    const response = await request(app).post('/upload').attach('resumes', Buffer.from('%PDF-1.4'), {
+      filename: 'resume.pdf',
+      contentType: 'application/pdf',
+    });
 
     expect(response.status).toBe(202);
   });

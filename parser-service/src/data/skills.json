@@ -9,7 +9,7 @@
   { "name": "HTML", "aliases": ["html5", "html"] },
   { "name": "CSS", "aliases": ["css3", "css"] },
   { "name": "Tailwind CSS", "aliases": ["tailwind", "tailwindcss"] },
-  { "name": "Bootstrap", "aliases": [] }, 
+  { "name": "Bootstrap", "aliases": [] },
 
   { "name": "Node.js", "aliases": ["node", "nodejs", "node js"] },
   { "name": "Express", "aliases": ["expressjs", "express.js"] },

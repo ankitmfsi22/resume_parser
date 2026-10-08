@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Insights, Resume, ResumeFilters, ResumeListResponse} from '../types';
+import type { Insights, Resume, ResumeFilters, ResumeListResponse } from '../types';
 
 const api = axios.create({ baseURL: '/api' });
 
